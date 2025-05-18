@@ -1,137 +1,104 @@
-import { Text, View, Image, TextInput, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useState } from 'react';
-import Button from '~/src/components/Button';
-import { supabase } from '~/src/lib/supabase';
-import { useAuth } from '~/src/providers/AuthProvider';
-import CustomTextInput from '~/src/components/CustomTextInput';
-import { cld, uploadImage } from '~/src/lib/cloudinary';
-import { thumbnail } from '@cloudinary/url-gen/actions/resize';
-import { AdvancedImage } from 'cloudinary-react-native';
+import { Text, View, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useEffect, useState } from "react";
+import Button from "~/src/components/Button";
+import { useAuth } from "~/src/providers/AuthProvider";
+import CustomTextInput from "~/src/components/CustomTextInput";
+import { cld, uploadImage } from "~/src/lib/cloudinary";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { AdvancedImage } from "cloudinary-react-native";
 
 export default function ProfileScreen() {
-  const [image, setImage] = useState<string | null>(null);
-  const [remoteImage, setRemoteImage] = useState<string | null>(null);
-  const [username, setUsername] = useState('');
-  const [bio, setBio] = useState('');
+	const [image, setImage] = useState<string | null>(null);
+	const [remoteImage, setRemoteImage] = useState<string | null>(null);
+	const [username, setUsername] = useState("");
+	const [bio, setBio] = useState("");
 
-  const { user } = useAuth();
+	const { user } = useAuth();
 
-  useEffect(() => {
-    getProfile();
-  }, []);
+	useEffect(() => {
+		getProfile();
+	}, []);
 
-  const getProfile = async () => {
-    if (!user) {
-      return;
-    }
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+	const getProfile = async () => {
+		if (!user) {
+			return;
+		}
+		// GEt user profile here
 
-    if (error) {
-      Alert.alert('Failed to fetch profile');
-    }
+		setUsername("fostersoasare");
+		setBio("Test bio");
+		setRemoteImage(
+			"data:image/jpeg;base64,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"
+		);
+	};
 
-    setUsername(data.username);
-    setBio(data.bio);
-    setRemoteImage(data.avatar_url);
-  };
+	const updateProfile = async () => {
+		if (!user) {
+			return;
+		}
 
-  const updateProfile = async () => {
-    if (!user) {
-      return;
-    }
+		const updatedProfile = {
+			id: user.id,
+			username,
+			bio,
+			avatar_url: "",
+		};
 
-    const updatedProfile = {
-      id: user.id,
-      username,
-      bio,
-    };
+		if (image) {
+			const response = await uploadImage(image);
+			updatedProfile.avatar_url = response.public_id;
+		}
 
-    if (image) {
-      const response = await uploadImage(image);
-      updatedProfile.avatar_url = response.public_id;
-    }
+		// Update user profile here
+	};
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .update(updatedProfile);
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+		});
 
-    if (error) {
-      Alert.alert('Failed to update profile');
-    }
-  };
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+	let remoteCldImage;
+	if (remoteImage) {
+		remoteCldImage = cld.image(remoteImage);
+		remoteCldImage.resize(thumbnail().width(300).height(300));
+	}
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
+	return (
+		<View className="p-3 flex-1">
+			{/* Avatar image picker */}
+			{image ? (
+				<Image source={{ uri: image }} className="w-52 aspect-square self-center rounded-full bg-slate-300" />
+			) : remoteCldImage ? (
+				<AdvancedImage cldImg={remoteCldImage} className="w-52 aspect-square self-center rounded-full bg-slate-300" />
+			) : (
+				<View className="w-52 aspect-square  self-center rounded-full bg-slate-300" />
+			)}
+			<Text onPress={pickImage} className="text-blue-500 font-semibold m-5 self-center">
+				Change
+			</Text>
 
-  let remoteCldImage;
-  if (remoteImage) {
-    remoteCldImage = cld.image(remoteImage);
-    remoteCldImage.resize(thumbnail().width(300).height(300));
-  }
+			{/* Form */}
+			<View className="gap-5">
+				<CustomTextInput label="Username" placeholder="Username" value={username} onChangeText={setUsername} />
 
-  return (
-    <View className="p-3 flex-1">
-      {/* Avatar image picker */}
-      {image ? (
-        <Image
-          source={{ uri: image }}
-          className="w-52 aspect-square self-center rounded-full bg-slate-300"
-        />
-      ) : remoteCldImage ? (
-        <AdvancedImage
-          cldImg={remoteCldImage}
-          className="w-52 aspect-square self-center rounded-full bg-slate-300"
-        />
-      ) : (
-        <View className="w-52 aspect-square  self-center rounded-full bg-slate-300" />
-      )}
-      <Text
-        onPress={pickImage}
-        className="text-blue-500 font-semibold m-5 self-center"
-      >
-        Change
-      </Text>
+				<CustomTextInput label="Bio" placeholder="Bio" value={bio} onChangeText={setBio} multiline numberOfLines={3} />
+			</View>
 
-      {/* Form */}
-      <View className="gap-5">
-        <CustomTextInput
-          label="Username"
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-        />
-
-        <CustomTextInput
-          label="Bio"
-          placeholder="Bio"
-          value={bio}
-          onChangeText={setBio}
-          multiline
-          numberOfLines={3}
-        />
-      </View>
-
-      {/* Button */}
-      <View className="gap-2 mt-auto">
-        <Button title="Update profile" onPress={updateProfile} />
-        <Button title="Sign out" onPress={() => supabase.auth.signOut()} />
-      </View>
-    </View>
-  );
+			{/* Button */}
+			<View className="gap-2 mt-auto">
+				<Button title="Update profile" onPress={updateProfile} />
+				<Button title="Sign out" onPress={() => "sign out functionality"} />
+			</View>
+		</View>
+	);
 }
