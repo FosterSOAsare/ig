@@ -1,11 +1,10 @@
-import { Session, User } from "@supabase/supabase-js";
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 
 type Auth = {
 	isAuthenticated: boolean;
-	session: Session | null;
-	user?: User;
+	session: null;
+	user?: { id: number; name: string };
 };
 
 const AuthContext = createContext<Auth>({
@@ -14,24 +13,17 @@ const AuthContext = createContext<Auth>({
 });
 
 export default function AuthProvider({ children }: PropsWithChildren) {
-	const [session, setSession] = useState<Session | null>(null);
+	const [session, setSession] = useState<null>(null);
 	const [isReady, setIsReady] = useState(false);
 
-	useEffect(() => {
-		// supabase.auth.getSession().then(({ data: { session } }) => {
-		//   setSession(session);
-		//   setIsReady(true);
-		// });
-		// supabase.auth.onAuthStateChange((_event, session) => {
-		//   setSession(session);
-		// });
-	}, []);
+	// Get user session - Fetch loggedin user
+	useEffect(() => {}, []);
 
 	if (!isReady) {
 		return <ActivityIndicator />;
 	}
 
-	return <AuthContext.Provider value={{ session, user: session?.user, isAuthenticated: !!session?.user }}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ session, user: { id: 3, name: "Asare" }, isAuthenticated: true }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

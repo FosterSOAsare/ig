@@ -40,20 +40,8 @@ export default function CreatePost() {
 			return;
 		}
 		const response = await uploadImage(media);
-		// Save the post
+		// Save the post details
 		console.log("image id: ", response?.public_id);
-
-		// const { data, error } = await supabase
-		// 	.from("posts")
-		// 	.insert([
-		// 		{
-		// 			caption,
-		// 			image: response?.public_id,
-		// 			user_id: session?.user.id,
-		// 			media_type: mediaType,
-		// 		},
-		// 	])
-		// 	.select();
 
 		router.push("/(tabs)");
 	};

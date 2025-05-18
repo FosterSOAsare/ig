@@ -1,15 +1,14 @@
 export async function sendLikeNotification(like: { id: string }) {
-  // const { data } = await supabase
-  //   .from('likes')
-  //   .select('*, posts(*, profiles(*))')
-  //   .eq('id', like.id)
-  //   .single();
 
+  // Get the like record
+
+  // Check for push token 
   // const pushToken = data?.posts?.profiles?.push_token;
   // if (!pushToken) {
   //   return;
   // }
 
+  // Send message
   // const message = {
   //   to: pushToken,
   //   sound: 'default',
